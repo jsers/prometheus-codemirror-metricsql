@@ -1,6 +1,6 @@
 {
-  "name": "@clavinjune/lezer-metricsql",
-  "version": "0.0.1-dev.3007240001",
+  "name": "@fc-components/lezer-metricsql",
+  "version": "0.0.1",
   "description": "lezer-based MetricsQL grammar",
   "main": "dist/index.cjs",
   "type": "module",
@@ -10,7 +10,7 @@
   },
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
-  "author": "Clavin June <juneardoc@gmail.com>",
+  "author": "Jsers <xqing9024@gmail.com>",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

@@ -65,6 +65,8 @@ import {
     TopkLast,
     TopkMin,
     Zscore,
+  // with
+  With,
 } from './parser.terms.js';
 
 const keywordTokens = {
@@ -128,6 +130,8 @@ const contextualKeywordTokens = {
     topk_last: TopkLast,
     topk_min: TopkMin,
     zscore: Zscore,
+  // with
+  with: With,
 };
 
 export const extendIdentifier = (value, stack) => {

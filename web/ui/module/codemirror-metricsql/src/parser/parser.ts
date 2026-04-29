@@ -74,6 +74,7 @@ import {
   UnaryExpr,
   Unless,
   VectorSelector,
+  WithExpr,
   Zscore,
 } from '@clavinjune/lezer-metricsql';
 import { containsAtLeastOneChild } from './path-finder';
@@ -177,6 +178,9 @@ export class Parser {
         //   * Using ES2020 would be the way to go. Unfortunately moving to ES2020 is breaking the build of the lib.
         //     So far I didn't find the way to fix it. I think it's likely due to the fact we are building an ESM package which is now something stable in nodeJS/javascript but still experimental in typescript.
         // For the above reason, we decided to drop these checks.
+        break;
+      case WithExpr:
+        this.checkWithExpr(node);
         break;
     }
 
@@ -394,6 +398,20 @@ export class Parser {
         j = funcSignature.argTypes.length - 1;
       }
       this.expectType(args[i], funcSignature.argTypes[j], `call to function "${funcSignature.name}"`);
+    }
+  }
+
+  private checkWithExpr(node: SyntaxNode): void {
+    const assignments = node.getChildren('WithAssignment');
+    for (const assignment of assignments) {
+      const expr = assignment.getChild('Expr');
+      if (expr) {
+        this.checkAST(expr);
+      }
+    }
+    const bodyExpr = node.getChild('Expr');
+    if (bodyExpr) {
+      this.checkAST(bodyExpr);
     }
   }
 

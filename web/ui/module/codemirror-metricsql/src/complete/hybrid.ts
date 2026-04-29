@@ -52,6 +52,8 @@ import {
   SubqueryExpr,
   Unless,
   VectorSelector,
+  WithAssignment,
+  WithExpr,
 } from '@clavinjune/lezer-metricsql';
 import { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
@@ -101,6 +103,8 @@ export enum ContextKind {
   Bool,
   AtModifiers,
   Number,
+  // with CTE keyword
+  WithKeyword,
 }
 
 export interface Context {
@@ -355,6 +359,7 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context
       if (node.firstChild !== null && node.firstChild.type.id === 0) {
         // this situation can happen when there is nothing in the text area and the user is explicitly triggering the autocompletion (with ctrl + space)
         result.push(
+          { kind: ContextKind.WithKeyword },
           { kind: ContextKind.MetricName, metricName: '' },
           { kind: ContextKind.Function },
           { kind: ContextKind.Aggregation },
@@ -436,6 +441,16 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context
       // In this case we are in the given situation:
       //       sum() or in rate()
       // with the cursor between the bracket. So we can autocomplete the metric, the function and the aggregation.
+      result.push({ kind: ContextKind.MetricName, metricName: '' }, { kind: ContextKind.Function }, { kind: ContextKind.Aggregation });
+      break;
+    case WithExpr:
+      // Inside the body of a with expression after the closing paren.
+      // Offer the same completions as any expression context.
+      result.push({ kind: ContextKind.MetricName, metricName: '' }, { kind: ContextKind.Function }, { kind: ContextKind.Aggregation });
+      break;
+    case WithAssignment:
+      // Inside a with assignment (e.g., `name = |`).
+      // The expr child handles specific completions; fall back to generic expression completions.
       result.push({ kind: ContextKind.MetricName, metricName: '' }, { kind: ContextKind.Function }, { kind: ContextKind.Aggregation });
       break;
     case Neq:
@@ -546,6 +561,11 @@ export class HybridComplete implements CompleteStrategy {
         case ContextKind.AtModifiers:
           asyncResult = asyncResult.then((result) => {
             return result.concat(autocompleteNodes.atModifier);
+          });
+          break;
+        case ContextKind.WithKeyword:
+          asyncResult = asyncResult.then((result) => {
+            return result.concat([{ label: 'with', apply: 'with (\n  \n)' }]);
           });
           break;
         case ContextKind.Number:

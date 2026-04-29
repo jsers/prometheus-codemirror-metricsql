@@ -16,7 +16,14 @@
 
 set -ex
 
-npx lezer-generator src/promql.grammar -o src/parser
+npx @lezer/generator src/promql.grammar -o src/parser
+
+# Add backward-compatible token aliases
+echo '
+// backward-compatible aliases for downstream consumers
+export const Duration = 272;
+export const NumberLiteral = 273;
+export const LabelMatcher = 281;' >> src/parser.terms.js
 
 cat src/parser.terms.js >> src/parser.js
 

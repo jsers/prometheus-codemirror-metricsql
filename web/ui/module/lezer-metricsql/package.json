@@ -1,6 +1,6 @@
 {
   "name": "@fc-components/lezer-metricsql",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "lezer-based MetricsQL grammar",
   "main": "dist/index.cjs",
   "type": "module",
@@ -33,7 +33,8 @@
   "devDependencies": {
     "@lezer/generator": "^1.2.3",
     "@lezer/highlight": "^1.1.6",
-    "@lezer/lr": "^1.3.6"
+    "@lezer/lr": "^1.3.6",
+    "@rollup/plugin-node-resolve": "^16.0.3"
   },
   "peerDependencies": {
     "@lezer/highlight": "^1.1.6",

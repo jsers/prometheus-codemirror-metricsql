@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@top PromQL { expr }
+@top PromQL { WithExpr | expr }
 @top MetricName { Identifier }
 
 @precedence {
@@ -388,6 +388,15 @@ StepInvariantExpr {
   expr At ( NumberDurationLiteral | AtModifierPreprocessors "(" ")" )
 }
 
+WithExpr {
+  With "(" WithAssignment ("," WithAssignment)* ","? ")" expr
+}
+
+WithAssignment {
+  Identifier "=" expr
+}
+
+
 AtModifierPreprocessors {
   Start | End
 }
@@ -511,7 +520,9 @@ NumberDurationLiteralInDurationContext {
   TopkMedian,
   TopkLast,
   TopkMin,
-  Zscore
+  Zscore,
+  // cte
+  With
 }
 
 @external propSource promQLHighLight from "./highlight"
